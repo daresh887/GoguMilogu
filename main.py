@@ -6,6 +6,7 @@ import imageio
 import os
 from dotenv import load_dotenv
 from discord.ext import commands
+import requests
 
 load_dotenv()
 
@@ -54,10 +55,17 @@ async def bubble_sort(ctx):
 
     os.remove(gif_filename)
     
+def get_random_image():
+    url = "https://random.imagecdn.app/500/150"
+    response = requests.get(url, allow_redirects=True)
+    final_url = response.url
+    return final_url
+
 @bot.command()
 async def imagine(ctx):
-    random_image_url = "https://random.imagecdn.app/500/150"
+    random_image_url = get_random_image()
     await ctx.send(random_image_url)
+
 
 
 bot.run(TOKEN)
