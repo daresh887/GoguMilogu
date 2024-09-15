@@ -7,8 +7,15 @@ import os
 from dotenv import load_dotenv
 from discord.ext import commands
 import requests
+import cv2
+import asyncio
+
+
 
 load_dotenv()
+
+capture_lock = asyncio.Lock()
+
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 
@@ -60,6 +67,36 @@ def get_random_image():
     response = requests.get(url, allow_redirects=True)
     final_url = response.url
     return final_url
+
+def capture_image(filename="webcam_image.jpg"):
+    cap = cv2.VideoCapture(0)
+
+    if not cap.isOpened():
+        print("Error: Could not open webcam")
+        return None
+    
+    # Capture one frame
+    ret, frame = cap.read()
+    
+    if ret:
+        cv2.imwrite(filename, frame)
+    else:
+        print("Error: Could not capture image")
+    
+    cap.release()
+    return filename if ret else None
+
+@bot.command()
+async def imagine_darius(ctx):
+    async with capture_lock:
+        filename = "webcam_image.jpg"
+        
+        image_path = capture_image(filename)
+        
+        if image_path:
+            await ctx.send(file=discord.File(image_path))
+        else:
+            await ctx.send("Scuze nu pot sa ma conectez la camera.")
 
 @bot.command()
 async def imagine(ctx):
