@@ -54,5 +54,11 @@ async def bubble_sort(ctx):
 
     os.remove(gif_filename)
     
+@bot.command()
+async def imagine(ctx):
+    random_image_url = "https://random.imagecdn.app/500/150"
+    await ctx.send(random_image_url)
+
+
 bot.run(TOKEN)
 
